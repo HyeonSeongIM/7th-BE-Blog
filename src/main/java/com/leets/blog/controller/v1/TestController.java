@@ -1,7 +1,7 @@
 package com.leets.blog.controller.v1;
 
-import com.leets.blog.dto.StringRequest;
-import com.leets.blog.dto.StringResponse;
+import com.leets.blog.dto.request.StringRequest;
+import com.leets.blog.dto.response.StringResponse;
 import com.leets.blog.service.DtoConverter;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
