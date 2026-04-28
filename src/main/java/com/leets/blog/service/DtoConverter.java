@@ -1,10 +1,12 @@
 package com.leets.blog.service;
 
+import com.leets.blog.dto.response.ReportResponse;
 import com.leets.blog.dto.response.StringResponse;
 import com.leets.blog.dto.request.AddPostRequest;
 import com.leets.blog.dto.request.UpdatePostRequest;
 import com.leets.blog.dto.response.PostResponse;
 import com.leets.blog.entity.Post;
+import com.leets.blog.entity.Report;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,5 +39,15 @@ public class DtoConverter {
         );
     }
 
+    public ReportResponse toResponse(Report report) {
+        return new ReportResponse(
+                report.getId(),
+                report.getReporter().getId(),
+                report.getTargetType(),
+                report.getTargetId(),
+                report.getReason(),
+                report.getCreatedAt()
+        );
+    }
 
 }

@@ -45,4 +45,8 @@ public class User {
     // User는 여러 개의 Comment와 연결됨 (1:N)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    public Long getId() {
+        return this.id;
+    }
 }
