@@ -1,8 +1,8 @@
 package com.leets.blog.service;
 
+import com.leets.blog.entity.Comment;
 import com.leets.blog.entity.Post;
 import com.leets.blog.entity.Report;
-import com.leets.blog.entity.Comment;
 import com.leets.blog.entity.User;
 import com.leets.blog.entity.enums.ReportReason;
 import com.leets.blog.entity.enums.ReportTargetType;
@@ -18,15 +18,15 @@ public class ReportManager {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
-    public ReportManager(ReportRepository reportRepository, PostRepository postRepository, CommentRepository commentRepository) {
+    public ReportManager(ReportRepository reportRepository, PostRepository postRepository,
+                         CommentRepository commentRepository) {
         this.reportRepository = reportRepository;
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
     }
 
     public Report saveReport(User reporter, ReportTargetType targetType, Long targetId, ReportReason reason) {
-        Report report = new Report(reporter, targetType, targetId, reason);
-        return reportRepository.save(report);
+        return reportRepository.save(new Report(reporter, targetType, targetId, reason));
     }
 
     public void applyReportToPost(Post post) {

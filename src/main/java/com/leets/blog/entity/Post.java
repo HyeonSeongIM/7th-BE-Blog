@@ -30,13 +30,9 @@ public class Post {
     private Long id;
 
     private String title;
-
     private String content;
-
     private String imageUrl;
-
     private boolean liked;
-
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
@@ -46,22 +42,17 @@ public class Post {
     @Column(nullable = false)
     private int reportCount;
 
-    // Post는 하나의 User와 연결됨 (N:1)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    // Post는 여러 개의 Comment와 연결됨 (1:N)
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    // ── Domain Methods ─────────────────────────────────────────────────────────
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+    public void setTitle(String title) { this.title = title; }
+    public void setContent(String content) { this.content = content; }
 
     public void increaseReportCount() {
         this.reportCount++;
@@ -70,11 +61,20 @@ public class Post {
         }
     }
 
-    public boolean isActive() {
-        return this.status == ContentStatus.ACTIVE;
+    // [ADD] 관리자용 수동 상태 전이 — PostService.hidePost() / activatePost()에서 호출
+    public void hide() {
+        this.status = ContentStatus.HIDDEN;
     }
 
-    public boolean isHidden() {
-        return this.status == ContentStatus.HIDDEN;
+    public void activate() {
+        this.status = ContentStatus.ACTIVE;
     }
+
+    // [ADD] 채택된 댓글 존재 여부 — CommentService.acceptComment()에서 중복 채택 방지에 사용
+    public boolean hasAcceptedComment() {
+        return this.comments.stream().anyMatch(Comment::isAccepted);
+    }
+
+    public boolean isActive() { return this.status == ContentStatus.ACTIVE; }
+    public boolean isHidden() { return this.status == ContentStatus.HIDDEN; }
 }

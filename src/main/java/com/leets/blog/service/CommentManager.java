@@ -3,11 +3,11 @@ package com.leets.blog.service;
 import com.leets.blog.entity.Comment;
 import com.leets.blog.entity.Post;
 import com.leets.blog.entity.User;
-import com.leets.blog.exception.comment.CommentErrorCode;
-import com.leets.blog.exception.comment.CommentException;
 import com.leets.blog.repository.CommentRepository;
 import com.leets.blog.repository.PostRepository;
 import com.leets.blog.repository.UserRepository;
+import com.leets.blog.support.error.CommentException;
+import com.leets.blog.support.error.ErrorType;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,10 +25,9 @@ public class CommentManager {
 
     public Comment add(Comment comment, Long postId, Long userId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_POST_NOT_FOUND));
-
+                .orElseThrow(() -> new CommentException(ErrorType.COMMENT_POST_NOT_FOUND));
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_USER_NOT_FOUND));
+                .orElseThrow(() -> new CommentException(ErrorType.COMMENT_USER_NOT_FOUND));
 
         comment.assignPost(post);
         comment.assignUser(user);
@@ -38,17 +37,14 @@ public class CommentManager {
 
     public Comment update(Long commentId, String newContent) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_NOT_FOUND));
-
+                .orElseThrow(() -> new CommentException(ErrorType.NOT_FOUND_COMMENT));
         comment.updateContent(newContent);
-
         return comment;
     }
 
     public void delete(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(CommentErrorCode.COMMENT_NOT_FOUND));
-
+                .orElseThrow(() -> new CommentException(ErrorType.NOT_FOUND_COMMENT));
         comment.softDelete();
     }
 }

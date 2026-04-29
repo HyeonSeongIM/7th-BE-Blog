@@ -1,6 +1,7 @@
 package com.leets.blog.entity;
 
 import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,23 +31,24 @@ public class User {
     private String email;
 
     private String phoneNumber;
-
     private String nickname;
-
     private String image;
 
     @Column(nullable = false)
     private String password;
 
-    // User는 여러 개의 Post와 연결됨 (1:N)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
 
-    // User는 여러 개의 Comment와 연결됨 (1:N)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    public Long getId() {
-        return this.id;
-    }
+    // ── Getters ────────────────────────────────────────────────────────────────
+
+    public Long getId() { return id; }
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public String getNickname() { return nickname; }
+    public String getImage() { return image; }
 }

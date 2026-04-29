@@ -1,21 +1,15 @@
 package com.leets.blog.dto.request;
 
-import com.leets.blog.support.error.ErrorType;
-import com.leets.blog.support.error.PostException;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public record UpdatePostRequest(
-        String title,
-        String content
-) {
-    public UpdatePostRequest {
-        // 제목이 10자를 초과할 경우 예외 발생
-        if (title != null && title.length() > 10) {
-            throw new PostException(ErrorType.INVALID_EXCEPTION);
-        }
 
-        // 내용이 비어있는지 확인하는 추가 검증
-        if (content == null || content.isBlank()) {
-            throw new PostException(ErrorType.INVALID_EXCEPTION);
-        }
-    }
-}
+        // [FIX] AddPostRequest와 기준 통일 (기존: "> 10"으로 불일치)
+        @NotBlank(message = "제목은 필수입니다.")
+        @Size(min = 10, message = "제목은 최소 10자 이상이어야 합니다.")
+        String title,
+
+        @NotBlank(message = "내용은 필수입니다.")
+        String content
+) {}

@@ -2,6 +2,8 @@ package com.leets.blog.service;
 
 import com.leets.blog.entity.Post;
 import com.leets.blog.repository.PostRepository;
+import com.leets.blog.support.error.ErrorType;
+import com.leets.blog.support.error.PostException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,25 +17,21 @@ public class PostManager {
     }
 
     @Transactional
-    public Post add (Post post) {
+    public Post add(Post post) {
         return postRepository.save(post);
     }
 
-    // NOTE : userId 제외
     @Transactional
-    public Post update (Long postId, Post post) {
-
-        Post savedPost = postRepository.findById(postId).orElseThrow(RuntimeException::new);
-
+    public Post update(Long postId, Post post) {
+        Post savedPost = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(ErrorType.NOT_FOUND_POST));
         savedPost.setTitle(post.getTitle());
         savedPost.setContent(post.getContent());
-
         return savedPost;
     }
 
-    // NOTE : userId 제외
     @Transactional
-    public void delete (Long postId) {
+    public void delete(Long postId) {
         postRepository.deleteById(postId);
     }
 }

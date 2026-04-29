@@ -19,26 +19,25 @@ public class PostController {
 
     @GetMapping
     public ApiResponse<List<PostResponse>> getPosts() {
-        List<PostResponse> result = postService.getPosts();
-        return ApiResponse.success(result);
+        return ApiResponse.success(postService.getPosts());
     }
 
     @GetMapping("/{postId}")
-    public ApiResponse<PostResponse> getPostByPostId(@PathVariable Long postId) {
-        PostResponse result = postService.getPostByPostId(postId);
-        return ApiResponse.success(result);
+    public ApiResponse<PostResponse> getPost(@PathVariable Long postId) {
+        return ApiResponse.success(postService.getPostByPostId(postId));
     }
 
     @PostMapping
     public ApiResponse<PostResponse> writePost(@RequestBody AddPostRequest request) {
-        PostResponse result = postService.addPost(request);
-        return ApiResponse.success(result);
+        return ApiResponse.success(postService.addPost(request));
     }
 
     @PutMapping("/{postId}")
-    public ApiResponse<PostResponse> reWritePost(@PathVariable Long postId, @RequestBody UpdatePostRequest request) {
-        PostResponse result = postService.updatePost(postId, request);
-        return ApiResponse.success(result);
+    public ApiResponse<PostResponse> updatePost(
+            @PathVariable Long postId,
+            @RequestBody UpdatePostRequest request
+    ) {
+        return ApiResponse.success(postService.updatePost(postId, request));
     }
 
     @DeleteMapping("/{postId}")
@@ -47,4 +46,21 @@ public class PostController {
         return ApiResponse.success();
     }
 
+    /**
+     * PATCH /api/v1/posts/{id}/hide
+     * 게시물 숨김 처리 (관리자용)
+     */
+    @PatchMapping("/{id}/hide")
+    public ApiResponse<PostResponse> hidePost(@PathVariable Long id) {
+        return ApiResponse.success(postService.hidePost(id));
+    }
+
+    /**
+     * PATCH /api/v1/posts/{id}/activate
+     * 게시물 활성화 (관리자용)
+     */
+    @PatchMapping("/{id}/activate")
+    public ApiResponse<PostResponse> activatePost(@PathVariable Long id) {
+        return ApiResponse.success(postService.activatePost(id));
+    }
 }

@@ -1,8 +1,5 @@
 package com.leets.blog.service;
 
-import com.leets.blog.dto.request.AddCommentRequest;
-import com.leets.blog.dto.response.CommentResponse;
-import com.leets.blog.entity.Comment;
 import com.leets.blog.entity.Post;
 import com.leets.blog.repository.PostRepository;
 import com.leets.blog.support.error.ErrorType;
@@ -22,40 +19,17 @@ public class PostFinder {
 
     public List<Post> findPosts() {
         List<Post> posts = postRepository.findAll();
-
         if (posts.isEmpty()) {
             throw new PostException(ErrorType.NOT_EXIST_POST);
         }
-
         return posts;
     }
 
     public Post findPostByPostId(Long postId) {
-
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(ErrorType.NOT_FOUND_POST));
-
-        if (post.isHidden()) {
-            throw new PostHiddenException();
-        }
-
+        // [FIX] 숨김 게시글 접근 차단을 PostFinder가 아닌 서비스 레이어에서 결정하도록 분리.
+        // Finder는 순수 조회만 담당. 상태 검증은 각 서비스/validator 책임.
         return post;
-    }
-
-    public CommentResponse toCommentDTO(Comment comment) {
-        return new CommentResponse(
-                comment.getId(),
-                comment.getContent(),
-                comment.isLiked(),
-                comment.getCreateAt(),
-                comment.getStatus(),
-                comment.getReportCount(),
-                comment.getUser() != null ? comment.getUser().getId() : null,
-                comment.getPost() != null ? comment.getPost().getId() : null
-        );
-    }
-
-    public Comment toComment(AddCommentRequest request) {
-        return new Comment(request.content());
     }
 }

@@ -4,6 +4,8 @@ import com.leets.blog.entity.Comment;
 import com.leets.blog.entity.Post;
 import com.leets.blog.repository.CommentRepository;
 import com.leets.blog.repository.PostRepository;
+import com.leets.blog.support.error.ErrorType;
+import com.leets.blog.support.error.ReportException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,11 +21,13 @@ public class ReportFinder {
 
     public Post findPost(Long postId) {
         return postRepository.findById(postId)
-                .orElseThrow(PostNotFoundException::new);
+                // [FIX] PostNotFoundException → 공통 ErrorType 기반 ReportException으로 통일
+                .orElseThrow(() -> new ReportException(ErrorType.NOT_FOUND_POST));
     }
 
     public Comment findComment(Long commentId) {
         return commentRepository.findById(commentId)
-                .orElseThrow(CommentNotFoundException::new);
+                // [FIX] CommentNotFoundException → 공통 ErrorType 기반 ReportException으로 통일
+                .orElseThrow(() -> new ReportException(ErrorType.NOT_FOUND_COMMENT));
     }
 }

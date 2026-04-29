@@ -17,6 +17,8 @@ public class Comment {
         this.content = content;
         this.status = ContentStatus.ACTIVE;
         this.reportCount = 0;
+        this.liked = false;
+        this.accepted = false;
         this.createAt = LocalDateTime.now();
     }
 
@@ -30,6 +32,10 @@ public class Comment {
     @Column(nullable = false)
     private boolean liked;
 
+    // [ADD] 채택 여부
+    @Column(nullable = false)
+    private boolean accepted;
+
     @Column(nullable = false)
     private LocalDateTime createAt;
 
@@ -40,46 +46,51 @@ public class Comment {
     @Column(nullable = false)
     private int reportCount;
 
-    // Comment는 하나의 User와 연결됨 (N:1)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id") // FK: userId
+    @JoinColumn(name = "user_id")
     private User user;
 
-    // Comment는 하나의 Post에 속함 (N:1)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id") // FK: postId
+    @JoinColumn(name = "post_id")
     private Post post;
 
-    public Long getId() {
-        return id;
+    // ── Getters ────────────────────────────────────────────────────────────────
+
+    public Long getId() { return id; }
+    public String getContent() { return content; }
+    public boolean isLiked() { return liked; }
+    public boolean isAccepted() { return accepted; }
+    public LocalDateTime getCreateAt() { return createAt; }
+    public ContentStatus getStatus() { return status; }
+    public int getReportCount() { return reportCount; }
+    public User getUser() { return user; }
+    public Post getPost() { return post; }
+
+    // ── Domain Methods ─────────────────────────────────────────────────────────
+
+    // [ADD] CommentManager.add()에서 호출
+    public void assignPost(Post post) {
+        this.post = post;
     }
 
-    public String getContent() {
-        return content;
+    // [ADD] CommentManager.add()에서 호출
+    public void assignUser(User user) {
+        this.user = user;
     }
 
-    public boolean isLiked() {
-        return liked;
+    // [ADD] CommentManager.update()에서 호출
+    public void updateContent(String newContent) {
+        this.content = newContent;
     }
 
-    public LocalDateTime getCreateAt() {
-        return createAt;
+    // [ADD] CommentManager.delete()에서 호출 — 물리 삭제 대신 상태 전이
+    public void softDelete() {
+        this.status = ContentStatus.HIDDEN;
     }
 
-    public ContentStatus getStatus() {
-        return status;
-    }
-
-    public int getReportCount() {
-        return reportCount;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Post getPost() {
-        return post;
+    // [ADD] 채택 처리 — CommentService.acceptComment()에서 호출
+    public void accept() {
+        this.accepted = true;
     }
 
     public void increaseReportCount() {
@@ -89,11 +100,6 @@ public class Comment {
         }
     }
 
-    public boolean isActive() {
-        return this.status == ContentStatus.ACTIVE;
-    }
-
-    public boolean isHidden() {
-        return this.status == ContentStatus.HIDDEN;
-    }
+    public boolean isActive() { return this.status == ContentStatus.ACTIVE; }
+    public boolean isHidden() { return this.status == ContentStatus.HIDDEN; }
 }

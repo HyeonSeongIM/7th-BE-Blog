@@ -1,19 +1,28 @@
 package com.leets.blog.service;
 
+import com.leets.blog.entity.Post;
+import com.leets.blog.support.error.ErrorType;
+import com.leets.blog.support.error.PostException;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PostValidator {
 
-    // NOTE : 존재하지 않는 게시글 접근 시
-    public void validateGet() {
-        throw new IllegalArgumentException("작성 중");
+    public void validateVisible(Post post) {
+        if (post.isHidden()) {
+            throw new PostException(ErrorType.POST_ALREADY_HIDDEN);
+        }
     }
 
-
-    // NOTE : 잘못된 입력값 요청 시
-    public void validateNew() {
-        throw new IllegalArgumentException("작성 중");
+    public void validateNotAlreadyHidden(Post post) {
+        if (post.isHidden()) {
+            throw new PostException(ErrorType.POST_ALREADY_HIDDEN);
+        }
     }
 
+    public void validateNotAlreadyActive(Post post) {
+        if (post.isActive()) {
+            throw new PostException(ErrorType.POST_ALREADY_ACTIVE);
+        }
+    }
 }
